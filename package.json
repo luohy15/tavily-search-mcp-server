@@ -1,0 +1,39 @@
+{
+  "name": "tavily-search-mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server for Tavily Search API integration",
+  "license": "MIT",
+  "author": "Alexandros Pappas",
+  "keywords": [
+    "tavily",
+    "search",
+    "mcp",
+    "model-context-protocol",
+    "llm",
+    "claude"
+  ],
+  "type": "module",
+  "bin": {
+    "mcp-server-tavily-search": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && shx chmod +x dist/*.js",
+    "prepare": "npm run build",
+    "watch": "tsc --watch",
+    "start": "node dist/index.js",
+    "start:sse": "node dist/sse.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.0.1",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22",
+    "shx": "^0.3.4",
+    "typescript": "^5.6.2"
+  }
+}
