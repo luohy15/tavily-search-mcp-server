@@ -5,7 +5,7 @@ COPY tsconfig.json /tsconfig.json
 
 WORKDIR /app
 
-RUN --mount=type=cache,target=/root/.npm npm install
+RUN --mount=type=cache,id=npm-cache,target=/root/.npm npm install
 
 FROM node:22-alpine AS release
 
