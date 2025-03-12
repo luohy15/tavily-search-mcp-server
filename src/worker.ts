@@ -93,12 +93,6 @@ async function handleSSERequest(request: Request, env: Env, ctx: ExecutionContex
 async function handleMessageRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   console.log("Received message request");
 
-  // Verify Bearer token authentication
-  if (!verifyBearerToken(request, env)) {
-    console.log("Authentication failed for message request");
-    return new Response("Unauthorized", { status: 401 });
-  }
-
   try {
     // Get the Durable Object stub for this session
     const sessionDO = getSessionDO(env, "test");
