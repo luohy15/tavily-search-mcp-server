@@ -86,7 +86,7 @@ const TAVILY_SEARCH_TOOL: Tool = {
     },
 };
 
-export const createServer = () => {
+export const createServer = (apiKey?: string) => {
 // Server implementation
     const server = new Server(
         {
@@ -101,10 +101,14 @@ export const createServer = () => {
     );
 
 // Check for API key
-    const TAVILY_API_KEY = process.env.TAVILY_API_KEY!;
+    const TAVILY_API_KEY = apiKey || process.env.TAVILY_API_KEY!;
     if (!TAVILY_API_KEY) {
         console.error("Error: TAVILY_API_KEY environment variable is required");
-        process.exit(1);
+        if (typeof process !== 'undefined' && process.exit) {
+            process.exit(1);
+        } else {
+            throw new Error("TAVILY_API_KEY environment variable is required");
+        }
     }
 
     interface TavilySearchArgs {

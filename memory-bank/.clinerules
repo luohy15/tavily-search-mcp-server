@@ -1,0 +1,115 @@
+# Cline Rules: Tavily Search MCP Server
+
+## Project Patterns
+
+### Code Organization
+- TypeScript source files are in the `src/` directory
+- Compiled JavaScript files go to the `dist/` directory
+- Main entry points are `index.ts` (stdio) and `sse.ts` (SSE)
+- Core functionality is in `tavily.ts`
+
+### Naming Conventions
+- Use camelCase for variables and functions
+- Use PascalCase for interfaces and types
+- Use UPPER_SNAKE_CASE for constants
+
+### Error Handling
+- Use try/catch blocks for API calls
+- Return structured error responses through the MCP interface
+- Log errors to the console for debugging
+
+### Configuration
+- Use environment variables for sensitive information
+- Document required environment variables
+- Provide sensible defaults where possible
+
+## Workflow Patterns
+
+### Development Workflow
+1. Make changes to TypeScript files
+2. Build with `npm run build`
+3. Test locally with `npm start` or `npm run start:sse`
+4. Document changes
+
+### Deployment Workflow
+1. Ensure all changes are built
+2. Configure environment variables
+3. Deploy using appropriate method (Node.js, Docker, or Cloudflare)
+4. Test deployed version
+
+## Cloudflare Workers Patterns
+
+### Worker Structure
+- Use a single Worker script for the entire application
+- Handle different routes within the fetch event handler
+- Use streaming responses for SSE functionality
+
+### Durable Objects
+- Use `idFromName()` instead of `idFromString()` for creating Durable Object IDs
+- Durable Object IDs must be 64 hex digits
+- UUIDs (even with hyphens removed) are only 32 hex digits and not suitable for direct use
+- Always use deterministic ID generation for consistent object mapping
+
+### Environment Variables
+- Configure through Wrangler
+- Access via `env` parameter in fetch handler
+- Validate presence of required variables
+
+### Error Handling
+- Use try/catch blocks
+- Return appropriate HTTP status codes
+- Log errors where possible
+
+### Connection Management
+- Use appropriate headers for SSE connections
+- Handle connection timeouts gracefully
+- Implement reconnection logic if needed
+- Support session persistence by allowing clients to reconnect with the same session ID
+- Log session IDs for debugging and client reference
+
+### Message Handling
+- Send responses directly through the SSE connection when messages are received
+- `handleMessage` method attempts to send messages immediately if there's an active connection
+- Only store messages for later delivery if there's no active connection or sending fails
+- `sendPendingMessages` method handles sending stored messages when a connection is established
+- Format messages according to the JSON-RPC 2.0 specification for MCP transport:
+  ```javascript
+  {
+    jsonrpc: "2.0",
+    id: "unique-message-id",
+    result: {
+      content: [
+        {
+          type: "text",
+          text: "message content as string"
+        }
+      ]
+    }
+  }
+  ```
+- Always convert non-string message content to JSON strings
+- Log message content for debugging purposes
+
+## Documentation Patterns
+
+### Code Documentation
+- Use JSDoc comments for functions and classes
+- Document parameters and return values
+- Explain complex logic
+
+### User Documentation
+- Provide clear setup instructions
+- Document all configuration options
+- Include examples of usage
+
+## Testing Patterns
+
+### Manual Testing
+- Test with local MCP client
+- Verify all tool functionality
+- Check error handling
+
+### Deployment Testing
+- Verify environment variable configuration
+- Test connection establishment
+- Verify tool registration and functionality
